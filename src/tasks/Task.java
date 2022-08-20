@@ -90,7 +90,7 @@ public class Task {
 
     @Override
     public String toString() {
-        String result = "(номер задачи= " + id + ", тип задачи = " + type + ", статус= " + status + ", "
+        String result = "(id= " + id + ", тип задачи = " + type + ", статус= " + status + ", "
                 + "название= " + name;
         result = result + ", содержание: " + description;
         if (duration == 0) {

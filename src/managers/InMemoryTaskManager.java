@@ -85,21 +85,31 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void createTask(Task task) {
-        try {
-            checkingOverlaysOfPeriods(task.getStartTime(), task.getEndTime(), null);
-            int id = getId();
-            task.setId(id);
-            this.tasks.put(id, task);
-            prioritizedTasks.put(task.getStartTime(), task);
-        } catch (UnsupportedOperationException exception) {
-            System.out.println(exception.getMessage() + "Задача <" + task.getName() + "> не добавлена!\n");
+        if (task.getDuration() !=0) {
+            try {
+                checkingOverlaysOfPeriods(task.getStartTime(), task.getEndTime(), null);
+            } catch (UnsupportedOperationException exception) {
+                System.out.println(exception.getMessage() + "Задача <" + task.getName() + "> не добавлена!\n");
+                return;
+            }
         }
+        int id = getId();
+        task.setId(id);
+        this.tasks.put(id, task);
+        prioritizedTasks.put(task.getStartTime(), task);
     }
 
     @Override
     public void createSubTask(Subtask subtask) {
+        if (subtask.getDuration() !=0) {
+            try {
+                checkingOverlaysOfPeriods(subtask.getStartTime(), subtask.getEndTime(), null);
+            } catch (UnsupportedOperationException exception) {
+                System.out.println(exception.getMessage() + "Подзадача <" + subtask.getName() + "> не добавлена!\n");
+                return;
+            }
+        }
         try {
-            checkingOverlaysOfPeriods(subtask.getStartTime(), subtask.getEndTime(), null);
             Epic epic = getEpicById(subtask.getIdEpic());
 
             int idSubtask = getId();
@@ -112,8 +122,7 @@ public class InMemoryTaskManager implements TaskManager {
 
             prioritizedTasks.put(subtask.getStartTime(), subtask);
 
-        } catch (UnsupportedOperationException exception) {
-            System.out.println(exception.getMessage() + "Подзадача <" + subtask.getName() + "> не добавлена!\n");
+
         } catch (NullPointerException exception) {
             System.out.println(exception.getMessage() + "Подзадача <" + subtask.getName() + "> не добавлена!\n");
         }
@@ -129,7 +138,9 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void updatedTask(Task task) {
         try {
-            checkingOverlaysOfPeriods(task.getStartTime(), task.getEndTime(), task.getId());
+            if (task.getDuration() !=0) {
+                checkingOverlaysOfPeriods(task.getStartTime(), task.getEndTime(), task.getId());
+            }
             this.tasks.put(task.getId(), task);
             System.out.println("task = " + task);
             prioritizedTasks.put(task.getStartTime(), task);
@@ -147,7 +158,9 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void updatedSubTask(Subtask subTask) {
         try {
-            checkingOverlaysOfPeriods(subTask.getStartTime(), subTask.getEndTime(), subTask.getId());
+            if (subTask.getDuration() !=0) {
+                checkingOverlaysOfPeriods(subTask.getStartTime(), subTask.getEndTime(), subTask.getId());
+            }
             this.subtasks.put(subTask.getId(), subTask);
             setStatusEpic(subTask.getIdEpic());
             setStartEndEpic(subTask.getIdEpic());
@@ -270,18 +283,18 @@ public class InMemoryTaskManager implements TaskManager {
         prioritizedTasks.clear();
     }
 
-    private void checkingOverlaysOfPeriods(LocalDateTime startTime, LocalDateTime endTime, Integer idForUpdateTask) {
-        for (Task prioritizedTask : getPrioritizedTasks()) {
-            boolean isСondition;
-            if (idForUpdateTask != null) {
-                isСondition = (prioritizedTask.getDuration() != 0)
-                        && (prioritizedTask.getId() != idForUpdateTask);
+    private void checkingOverlaysOfPeriods(LocalDateTime startTime, LocalDateTime endTime, Integer idTaskUpdate) {
+        boolean isСondition;
+        for (Task task : getPrioritizedTasks()) {
+            if (idTaskUpdate == null) {
+                isСondition = (task.getDuration() != 0);
             } else {
-                isСondition = (prioritizedTask.getDuration() != 0);
+                isСondition = (task.getDuration() != 0)
+                        && (task.getId() != idTaskUpdate);
             }
             if (isСondition) {
-                if (endTime.isAfter(prioritizedTask.getStartTime())
-                        && startTime.isBefore(prioritizedTask.getEndTime())) {
+                if (endTime.isAfter(task.getStartTime())
+                        && startTime.isBefore(task.getEndTime())) {
                     throw new UnsupportedOperationException("Обнаружено пересечение периодов!");
                 }
             }

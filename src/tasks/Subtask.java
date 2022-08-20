@@ -20,7 +20,7 @@ public class Subtask extends Task {
 
     @Override
     public String toString() {
-        String result = "(номер подзадачи= " + id + ", тип задачи = " + type + ", статус= " + status + ", "
+        String result = "(id = " + id + ", тип задачи = " + type + ", статус= " + status + ", "
                 + "название= " + name;
         result = result + ", содержание: " + description;
 

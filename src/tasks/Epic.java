@@ -56,7 +56,7 @@ public class Epic extends Task {
 
     @Override
     public String toString() {
-        String result = "(номер Эпика = " + id + ", тип задачи = " + type + ", статус= " + status + ", "
+        String result = "(id = " + id + ", тип задачи = " + type + ", статус= " + status + ", "
                 + "название= " + name;
         result = result + ", содержание: " + description;
         result = result + ", дата начала: "
