@@ -23,17 +23,17 @@ abstract class TaskManagerTest<T extends TaskManager> {
 
     abstract T getManager();
 
-    int createTaskForTest(Task task) {
+    protected int createTaskForTest(Task task) {
         manager.createTask(task);
         return task.getId();
     }
 
-    int createEpicForTest(Epic epic) {
+    protected int createEpicForTest(Epic epic) {
         manager.createEpic(epic);
         return epic.getId();
     }
 
-    int createSubtaskForTest(Subtask subtask) {
+    protected int createSubtaskForTest(Subtask subtask) {
         manager.createSubTask(subtask);
         return subtask.getId();
     }
@@ -87,27 +87,6 @@ abstract class TaskManagerTest<T extends TaskManager> {
         assertNotNull(tasks, "Задачи не возвращаются.");
         assertEquals(1, tasks.size(), "Неверное количество задач.");
         assertEquals(taskUpdate, newUpdateTask, "Задача не обновлена.");
-    }
-
-    @Test
-    void testUpdatedTaskIncorrectId() {
-        Task task = new Task(TypeTask.TASK, "Задача1", "Задача1.Описание",
-                LocalDateTime.of(2022, 8, 1, 0, 0),
-                (long) (60 * 24 * 3));
-        createTaskForTest(task);
-        Task taskUpdate = new Task(TypeTask.TASK, "Задача1 - new", "Задача1.Описание - new",
-                LocalDateTime.of(2022, 8, 1, 0, 0),
-                (long) (60 * 24 * 3));
-        taskUpdate.setId(5);
-
-        manager.updatedTask(taskUpdate);
-
-        final List<Task> tasks = manager.getAllTasks();
-        Task newUpdateTask = manager.getAllTasks().get(0);
-
-        assertNotNull(tasks, "Задачи не возвращаются.");
-        assertEquals(1, tasks.size(), "Неверное количество задач.");
-        assertEquals(task, newUpdateTask, "Задача обновляется при неверном ID.");
     }
 
     @Test
@@ -450,15 +429,13 @@ abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     void testGetEpicByIdForNotExistID() {
-        final NullPointerException exception = assertThrows(
-                NullPointerException.class,
-                () -> {
-                    Epic epic = new Epic(TypeTask.EPIC, "Эпик", "Эпик.Описание",
-                            LocalDateTime.now(), 0l);
-                    int idEpic = createEpicForTest(epic);
-                    final Epic savedEpic = manager.getEpicById(2);
-                });
-        assertEquals("Эпик с номером [2] не существует!", exception.getMessage());
+        Epic epic = new Epic(TypeTask.EPIC, "Эпик", "Эпик.Описание",
+                    LocalDateTime.now(), 0l);
+        final int idEpic = createEpicForTest(epic);
+        final Epic savedEpic = manager.getEpicById(2);
+
+        assertNull(savedEpic, "Эпик существует.");
+        assertNotEquals(epic, savedEpic, "Эпики совпадают.");
     }
 
     @Test

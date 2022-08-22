@@ -87,7 +87,7 @@ public class InMemoryTaskManager implements TaskManager {
     public void createTask(Task task) {
         if (task.getDuration() !=0) {
             try {
-                checkingOverlaysOfPeriods(task.getStartTime(), task.getEndTime(), null);
+                checkingOverlaysOfPeriods(task.getStartTime(), task.getEndTime());
             } catch (UnsupportedOperationException exception) {
                 System.out.println(exception.getMessage() + "Задача <" + task.getName() + "> не добавлена!\n");
                 return;
@@ -103,14 +103,14 @@ public class InMemoryTaskManager implements TaskManager {
     public void createSubTask(Subtask subtask) {
         if (subtask.getDuration() !=0) {
             try {
-                checkingOverlaysOfPeriods(subtask.getStartTime(), subtask.getEndTime(), null);
+                checkingOverlaysOfPeriods(subtask.getStartTime(), subtask.getEndTime());
             } catch (UnsupportedOperationException exception) {
                 System.out.println(exception.getMessage() + "Подзадача <" + subtask.getName() + "> не добавлена!\n");
                 return;
             }
         }
-        try {
-            Epic epic = getEpicById(subtask.getIdEpic());
+        Epic epic = getEpicById(subtask.getIdEpic());
+        if (epic != null) {
 
             int idSubtask = getId();
             subtask.setId(idSubtask);
@@ -121,10 +121,8 @@ public class InMemoryTaskManager implements TaskManager {
             setStartEndEpic(subtask.getIdEpic());
 
             prioritizedTasks.put(subtask.getStartTime(), subtask);
-
-
-        } catch (NullPointerException exception) {
-            System.out.println(exception.getMessage() + "Подзадача <" + subtask.getName() + "> не добавлена!\n");
+        } else {
+            System.out.println("Подзадача <" + subtask.getName() + "> не добавлена!\n");
         }
     }
 
@@ -139,10 +137,10 @@ public class InMemoryTaskManager implements TaskManager {
     public void updatedTask(Task task) {
         try {
             if (task.getDuration() !=0) {
-                checkingOverlaysOfPeriods(task.getStartTime(), task.getEndTime(), task.getId());
+                prioritizedTasks.remove(task.getStartTime());
+                checkingOverlaysOfPeriods(task.getStartTime(), task.getEndTime());
             }
             this.tasks.put(task.getId(), task);
-            System.out.println("task = " + task);
             prioritizedTasks.put(task.getStartTime(), task);
         } catch (UnsupportedOperationException exception) {
             System.out.println("Задача <" + task.getName() + "> не обновлена!\n");
@@ -159,7 +157,8 @@ public class InMemoryTaskManager implements TaskManager {
     public void updatedSubTask(Subtask subTask) {
         try {
             if (subTask.getDuration() !=0) {
-                checkingOverlaysOfPeriods(subTask.getStartTime(), subTask.getEndTime(), subTask.getId());
+                prioritizedTasks.remove(subTask.getStartTime());
+                checkingOverlaysOfPeriods(subTask.getStartTime(), subTask.getEndTime());
             }
             this.subtasks.put(subTask.getId(), subTask);
             setStatusEpic(subTask.getIdEpic());
@@ -193,10 +192,8 @@ public class InMemoryTaskManager implements TaskManager {
         Epic epic = epics.get(id);
         if (epic != null) {
             historyManager.add(epic);
-            return epic;
-        } else {
-            throw new NullPointerException(String.format("Эпик с номером [%d] не существует!", id));
         }
+        return epic;
     }
 
     @Override
@@ -283,16 +280,9 @@ public class InMemoryTaskManager implements TaskManager {
         prioritizedTasks.clear();
     }
 
-    private void checkingOverlaysOfPeriods(LocalDateTime startTime, LocalDateTime endTime, Integer idTaskUpdate) {
-        boolean isСondition;
+    private void checkingOverlaysOfPeriods(LocalDateTime startTime, LocalDateTime endTime) {
         for (Task task : getPrioritizedTasks()) {
-            if (idTaskUpdate == null) {
-                isСondition = (task.getDuration() != 0);
-            } else {
-                isСondition = (task.getDuration() != 0)
-                        && (task.getId() != idTaskUpdate);
-            }
-            if (isСondition) {
+            if (task.getDuration() != 0) {
                 if (endTime.isAfter(task.getStartTime())
                         && startTime.isBefore(task.getEndTime())) {
                     throw new UnsupportedOperationException("Обнаружено пересечение периодов!");
@@ -307,11 +297,10 @@ public class InMemoryTaskManager implements TaskManager {
         List<Subtask> listSubTask = getListSubTasks(idEpic);
 
         for (Subtask subtask : listSubTask) {
-            if (subtask.getIdEpic() == idEpic) {
-                startTime.add(subtask.getStartTime());
-                endTime.add(subtask.getEndTime());
-            }
+            startTime.add(subtask.getStartTime());
+            endTime.add(subtask.getEndTime());
         }
+
         epics.get(idEpic).setStartTime(startTime.first());
         epics.get(idEpic).setEndTimeEpic(endTime.last());
     }

@@ -68,7 +68,6 @@ public class CSVSerializator {
                 Epic epic = new Epic(type, name, description, startTime, duration);
                 epic.setId(id);
                 epic.setStatus(status);
-                // endTime()
                 return epic;
             case SUBTASK:
                 Subtask subtask = new Subtask(type, name, description, startTime, duration, epicId);

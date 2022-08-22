@@ -1,0 +1,5 @@
+id,type,name,status,description,epic
+1,EPIC,Эпик,NEW,Эпик.Описание,01.08.22 00:00 ,0,
+2,SUBTASK,Подзадача1 - new,NEW,Подзадача1.Описание - new,01.08.22 00:00 ,7200,1
+
+1
