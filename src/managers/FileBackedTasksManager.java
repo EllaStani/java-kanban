@@ -3,6 +3,10 @@ package managers;
 import tasks.Epic;
 import tasks.Subtask;
 import tasks.Task;
+import utility.CSVSerializator;
+import utility.ManagerSaveException;
+import utility.StatusTask;
+import utility.TypeTask;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -95,8 +99,8 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
     @Override
-    public void deleteAllTask() {
-        super.deleteAllTask();
+    public void deleteAllTasks() {
+        super.deleteAllTasks();
         save();
     }
 
@@ -173,6 +177,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                 switch (task.getType()) {
                     case TASK:
                         tasks.put(taskId, task);
+                        prioritizedTasks.put(task.getStartTime(), task);
                         break;
                     case EPIC:
                         Epic epic = (Epic) task;
@@ -181,6 +186,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                     case SUBTASK:
                         Subtask subtask = (Subtask) task;
                         subtasks.put(taskId, subtask);
+                        prioritizedTasks.put(subtask.getStartTime(), subtask);
                         Epic epicOfSubtask = getEpicById(subtask.getIdEpic());
                         epicOfSubtask.setListSubTask(subtask);
                         break;
@@ -211,7 +217,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         }
     }
 
-    private void save() {
+    protected void save() {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(this.fileName, StandardCharsets.UTF_8))) {
             bw.write("id,type,name,status,description,epic" + "\n");
             for (Task task : getAllTasks()) {
@@ -280,12 +286,14 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         System.out.println("Восстановили субтаски: " + managerFile.getAllSubtasks());
         System.out.println("Восстановили историю запросов: " + managerFile.getHistory());
 
+        System.out.println("PrioritizedTasks = " + managerFile.getPrioritizedTasks());
+
         managerFile.deleteTaskById(1);
         System.out.println("У Эпика 3 следующие подзадачи:" + '\n' + managerFile.getListSubTasks(3));
         managerFile.deleteSubTaskById(4);
         System.out.println("У Эпика 3 следующие подзадачи:" + '\n' + managerFile.getListSubTasks(3));
         managerFile.deleteEpicById(3);
-
+        System.out.println("getPrioritized = " + managerFile.getPrioritizedTasks());
         System.out.println("Новая история: " + managerFile.getHistory());
 
     }

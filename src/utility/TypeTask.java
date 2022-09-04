@@ -1,4 +1,4 @@
-package managers;
+package utility;
 
 public enum TypeTask {
     TASK,

@@ -2,6 +2,7 @@ package managers;
 
 import org.junit.jupiter.api.Test;
 import tasks.Task;
+import utility.TypeTask;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -17,7 +18,7 @@ class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksManager>
 
     @Test
     void testSystemOutPrint() {
-        TaskManager manager = Managers.getDefault();
+        TaskManager manager = new FileBackedTasksManager("file_backed_tasks_manager_file_name");
         Task task = new Task(TypeTask.TASK, "Задача1", "Задача1.Описание",
                 LocalDateTime.of(2022, 8, 1, 0, 0),
                 (long) (60 * 24 * 3));

@@ -1,8 +1,11 @@
-package managers;
+package utility;
 
+import managers.HistoryManager;
 import tasks.Epic;
 import tasks.Subtask;
 import tasks.Task;
+import utility.StatusTask;
+import utility.TypeTask;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -11,7 +14,7 @@ import java.util.List;
 
 public class CSVSerializator {
     public static final DateTimeFormatter DATE_TIME_FORMATTER
-            = DateTimeFormatter.ofPattern("dd.MM.yy HH:mm ");
+            = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
 
     public static List<Integer> fromStringHistory(String value) {
         List<Integer> history = new ArrayList<>();

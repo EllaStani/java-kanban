@@ -1,7 +1,7 @@
 package tasks;
 
-import managers.CSVSerializator;
-import managers.TypeTask;
+import utility.CSVSerializator;
+import utility.TypeTask;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;

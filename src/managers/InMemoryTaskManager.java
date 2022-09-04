@@ -3,6 +3,7 @@ package managers;
 import tasks.Epic;
 import tasks.Subtask;
 import tasks.Task;
+import utility.StatusTask;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -85,7 +86,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void createTask(Task task) {
-        if (task.getDuration() !=0) {
+        if (task.getDuration() != 0) {
             try {
                 checkingOverlaysOfPeriods(task.getStartTime(), task.getEndTime());
             } catch (UnsupportedOperationException exception) {
@@ -101,7 +102,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void createSubTask(Subtask subtask) {
-        if (subtask.getDuration() !=0) {
+        if (subtask.getDuration() != 0) {
             try {
                 checkingOverlaysOfPeriods(subtask.getStartTime(), subtask.getEndTime());
             } catch (UnsupportedOperationException exception) {
@@ -136,7 +137,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void updatedTask(Task task) {
         try {
-            if (task.getDuration() !=0) {
+            if (task.getDuration() != 0) {
                 prioritizedTasks.remove(task.getStartTime());
                 checkingOverlaysOfPeriods(task.getStartTime(), task.getEndTime());
             }
@@ -156,7 +157,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void updatedSubTask(Subtask subTask) {
         try {
-            if (subTask.getDuration() !=0) {
+            if (subTask.getDuration() != 0) {
                 prioritizedTasks.remove(subTask.getStartTime());
                 checkingOverlaysOfPeriods(subTask.getStartTime(), subTask.getEndTime());
             }
@@ -266,7 +267,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void deleteAllTask() {
+    public void deleteAllTasks() {
         if (!tasks.isEmpty()) {
             tasks.clear();
         }
@@ -292,9 +293,12 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     private void setStartEndEpic(int idEpic) {
+        List<Subtask> listSubTask = getListSubTasks(idEpic);
+        if (listSubTask.size() == 0) {
+            return;
+        }
         SortedSet<LocalDateTime> startTime = new TreeSet<>();
         SortedSet<LocalDateTime> endTime = new TreeSet<>();
-        List<Subtask> listSubTask = getListSubTasks(idEpic);
 
         for (Subtask subtask : listSubTask) {
             startTime.add(subtask.getStartTime());

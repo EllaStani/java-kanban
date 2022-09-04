@@ -6,11 +6,11 @@ import org.junit.jupiter.api.Test;
 import tasks.Epic;
 import tasks.Subtask;
 import tasks.Task;
+import utility.StatusTask;
+import utility.TypeTask;
 
-import java.lang.reflect.Executable;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -599,7 +599,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
         manager.createSubTask(task1);
         manager.createSubTask(task2);
 
-        manager.deleteAllTask();
+        manager.deleteAllTasks();
 
         final List<Task> tasks = manager.getAllTasks();
         final List<Epic> epics = manager.getAllEpics();

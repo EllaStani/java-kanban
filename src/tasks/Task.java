@@ -1,8 +1,8 @@
 package tasks;
 
-import managers.CSVSerializator;
-import managers.StatusTask;
-import managers.TypeTask;
+import utility.CSVSerializator;
+import utility.StatusTask;
+import utility.TypeTask;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
