@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 
 public class Managers {
+    private static KVServer kvServer;
     private Managers() {
 
     }
@@ -24,8 +25,11 @@ public class Managers {
     }
 
     public static KVServer getDefaultKVServer() throws IOException {
-        KVServer kvServer = new KVServer();
-        kvServer.start();
+
+        if (kvServer == null) {
+            kvServer = new KVServer();
+            kvServer.start();
+        }
         return kvServer;
     }
 
