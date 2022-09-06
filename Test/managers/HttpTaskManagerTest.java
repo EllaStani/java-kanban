@@ -17,11 +17,16 @@ import tasks.Subtask;
 import tasks.Task;
 import utility.TypeTask;
 
-class HttpTaskManagerTest  {
+class HttpTaskManagerTest extends TaskManagerTest<TaskManager> {
     private KVServer kvServer;
 
     HttpTaskManagerTest() throws IOException {
         kvServer = Managers.getDefaultKVServer();
+    }
+
+    @Override
+    TaskManager getManager() {
+        return Managers.getDefault();
     }
 
     @Test
