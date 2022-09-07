@@ -10,7 +10,6 @@ import tasks.Subtask;
 import tasks.Task;
 
 import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -92,7 +91,7 @@ public class HttpTaskManager extends FileBackedTasksManager {
         Type historyType = new TypeToken<List<Integer>>() {
         }.getType();
         final List<Integer> history = gson.fromJson(client.load("history/"), historyType);
-        System.out.println("history = " + history);
+
         for (Integer id : history) {
             if (this.tasks.containsKey(id)) {
                 historyManager.add(getTaskById(id));

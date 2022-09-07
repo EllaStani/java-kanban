@@ -10,13 +10,8 @@ import java.time.LocalDateTime;
 
 public class Managers {
     private static KVServer kvServer;
-    private Managers() {
-
-    }
 
     public static TaskManager getDefault() {
-        //return new InMemoryTaskManager();
-        //return new FileBackedTasksManager("resources/tasks.csv");
         return new HttpTaskManager(KVServer.PORT);
     }
 
@@ -25,7 +20,6 @@ public class Managers {
     }
 
     public static KVServer getDefaultKVServer() throws IOException {
-
         if (kvServer == null) {
             kvServer = new KVServer();
             kvServer.start();

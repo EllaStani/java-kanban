@@ -12,6 +12,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 public class KVTaskClient {
     private String url;
     private String apiToken;
+    private HttpClient client = HttpClient.newHttpClient();
 
     public KVTaskClient(int port) {
         this.url = "http://localhost:" + port + "/";
@@ -20,7 +21,6 @@ public class KVTaskClient {
 
     private String register(String url) {
         try {
-            HttpClient client = HttpClient.newHttpClient();
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(url + "register/"))
                     .GET()
@@ -37,7 +37,6 @@ public class KVTaskClient {
 
     public String load(String key) {
         try {
-            HttpClient client = HttpClient.newHttpClient();
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(url + "load/" + key + "?API_TOKEN=" + this.apiToken))
                     .GET()
@@ -52,9 +51,8 @@ public class KVTaskClient {
         }
     }
 
-    public String put(String key, String json) {
+    public void put(String key, String json) {
         try {
-            HttpClient client = HttpClient.newHttpClient();
             HttpRequest.BodyPublisher body = HttpRequest.BodyPublishers.ofString(json, UTF_8);
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(url + "save/" + key + "?API_TOKEN=" + this.apiToken))
@@ -64,7 +62,7 @@ public class KVTaskClient {
             if (response.statusCode() != 200) {
                 throw new ManagerSaveException("can't register a request, statusCode = " + response.statusCode());
             }
-            return response.body();
+            return;
         } catch (Exception exception) {
             throw new ManagerSaveException(exception.toString());
         }

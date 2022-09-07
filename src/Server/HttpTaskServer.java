@@ -35,7 +35,6 @@ public class HttpTaskServer {
 
     public static void main(String[] args) throws IOException {
         final HttpTaskServer server = new HttpTaskServer();
-        server.setUpTasks();
         server.startServer();
     }
 
@@ -334,21 +333,5 @@ public class HttpTaskServer {
         h.getResponseHeaders().add("Content-Type", "application/json;charset=utf-8");
         h.sendResponseHeaders(responseCode, resp.length);
         h.getResponseBody().write(resp);
-    }
-
-    private void setUpTasks() {
-        Task task10 = new Task(TypeTask.TASK, "Задача10", "Задача10.Описание",
-                LocalDateTime.now(), (long) 0);
-        manager.createTask(task10);
-
-        Task task1 = new Task(TypeTask.TASK, "Задача1",
-                "Задача1.Описание",
-                LocalDateTime.of(2022, 7, 1, 0, 0, 0),
-                (long) (60 * 24 * 14));
-        manager.createTask(task1);
-        Task task2 = new Task(TypeTask.TASK, "Задача2",
-                "Задача2.Описание",
-                LocalDateTime.of(2022, 6, 1, 0, 0, 0), (long) (60 * 24 * 7));
-        manager.createTask(task2);
     }
 }

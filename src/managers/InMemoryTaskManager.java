@@ -295,6 +295,7 @@ public class InMemoryTaskManager implements TaskManager {
     private void setStartEndEpic(int idEpic) {
         List<Subtask> listSubTask = getListSubTasks(idEpic);
         if (listSubTask.size() == 0) {
+            System.out.println("1-----------------");
             return;
         }
         SortedSet<LocalDateTime> startTime = new TreeSet<>();
